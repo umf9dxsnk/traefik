@@ -1,25 +1,18 @@
-# Security
+version: '3'
 
-At Traefik, we take security seriously. If you discover a security vulnerability, please report it responsibly.
-
-## Reporting a Vulnerability
-
-**Do not** open a public issue. Instead, send an email to security@traefik.io. We will respond within 5 business days.
-
-Please include:
-- Description of the vulnerability
-- Steps to reproduce
-- Affected versions
-- Any known mitigations
-
-We will handle your report with confidentiality and will work with you to resolve the issue.
-
-## Responsible Disclosure
-
-We encourage responsible disclosure. If you follow our reporting process, we will not pursue legal action. We'll acknowledge your contribution in the release notes if you wish.
-
-## Security Releases
-
-Security fixes are released as soon as possible. Watch our GitHub releases for announcements.
-
-Thank you for helping keep Traefik secure.
+services:
+  reverse-proxy:
+    # The official v3 Traefik docker image
+    image: traefik:v3.3
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
