@@ -1,18 +1,19 @@
-version: '3'
-
 services:
-  reverse-proxy:
-    # The official v3 Traefik docker image
-    image: traefik:v3.3
-    # Enables the web UI and tells Traefik to listen to docker
+  traefik:
+    image: traefik:v3.1
+    container_name: traefik
     command:
       - "--api.insecure=true"
-      - "--providers.docker"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
     ports:
-      # The HTTP port
       - "80:80"
-      # The Web UI (enabled by --api.insecure=true)
       - "8080:8080"
     volumes:
-      # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
